@@ -4,7 +4,7 @@ import tkinter as tk
 def start_search():
     industry = industry_entry.get()
     location = location_entry.get()
-    print(f"Searching for {industry} in {location}...")
+    status_label.config(text=f"Searching for {industry} in {location}...")
 
 
 root = tk.Tk()
@@ -26,5 +26,7 @@ location_entry.pack()
 search_button = tk.Button(root, text="Search", command=start_search)
 search_button.pack()
 
+status_label = tk.Label(root, text="")
+status_label.pack()
 
 root.mainloop()
