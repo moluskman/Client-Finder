@@ -17,11 +17,11 @@ industry_label.pack()
 industry_entry = tk.Entry(root)
 industry_entry.pack()
 
-industry_label = tk.Label(root, text="Location:")
-industry_label.pack()
+location_label = tk.Label(root, text="Location:")
+location_label.pack()
 
-industry_entry = tk.Entry(root)
-industry_entry.pack()
+location_entry = tk.Entry(root)
+location_entry.pack()
 
 search_button = tk.Button(root, text="Search", command=start_search)
 search_button.pack()
