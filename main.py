@@ -1,5 +1,6 @@
 import tkinter as tk
 import requests
+import csv
 
 
 def fetch_businesses(industry, location):
@@ -24,6 +25,12 @@ def start_search():
     for business in results:
         if business["website"] is None:
             filtered_leads.append(business)
+    with open("leads.csv", "w", newline="") as f:
+        fieldnames = ["name", "website"]
+        writer = csv.DictWriter(f, fieldnames=fieldnames)
+        writer.writeheader()
+        writer.writerows(filtered_leads)
+    status_label.config(text=f"Saved {len(filtered_leads)} leads to leads.csv!")
 
     status_label.config(
         text=f"Found {len(filtered_leads)} leads without websites!"
@@ -37,13 +44,11 @@ root.geometry("400x300")
 
 industry_label = tk.Label(root, text="Industry:")  # label is text that can be seen
 industry_label.pack()
-
 industry_entry = tk.Entry(root)  # entry is like search bar
 industry_entry.pack()
 
 location_label = tk.Label(root, text="Location:")
 location_label.pack()
-
 location_entry = tk.Entry(root)
 location_entry.pack()
 
