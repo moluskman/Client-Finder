@@ -15,7 +15,7 @@ industry_label.pack()
 industry_entry = tk.Entry(root)
 industry_entry.pack()
 
-search_button = tk.Button(root, text="Search")
+search_button = tk.Button(root, text="Search", command=start_search)
 search_button.pack()
 
 
