@@ -7,13 +7,28 @@ from bs4 import BeautifulSoup
 
 def fetch_businesses(industry, location):
     print(f"Fetching data for {industry} in {location}...")
+    url = "https://webscraper.io/test-sites/e-commerce/allinone"
+    response = requests.get(url)
+    soup = BeautifulSoup(response.text, "html.parser")
 
-    sample_results = [
-        {"name": "Melb Plumbers", "website": "https://melbplumbers.com.au"},
-        {"name": "FixIt Pipes", "website": None},
-        {"name": "Cranbourne Plumbing", "website": None},
-    ]
-    return sample_results
+    scraped_results = []
+
+    cards = soup.find_all("div", class_="business-card")
+
+    for card in cards:
+        name = card.find("h2", class_="biz-name").text
+
+        link_tag = card.find("a", class_="biz-website")
+
+        if link_tag is not None:
+            website_url = link_tag["href"]
+        else:
+            website_url = None
+
+        business_info = {"name": name, "website": website_url}
+        scraped_results.append(business_info)
+
+    return scraped_results
 
 
 def start_search():
