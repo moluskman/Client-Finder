@@ -7,6 +7,8 @@ from bs4 import BeautifulSoup
 
 def fetch_businesses(industry, location):
     print(f"Fetching data for {industry} in {location}...")
+    clean_industry = industry.replace(" ", "+")
+    clean_location = location.replace(" ", "+")
     url = "https://webscraper.io/test-sites/e-commerce/allinone"
     response = requests.get(url)
     soup = BeautifulSoup(response.text, "html.parser")
