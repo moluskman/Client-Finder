@@ -1,10 +1,11 @@
 import tkinter as tk
 import requests
 import csv
+import threading
 
 
 def fetch_businesses(industry, location):
-    print(f"Fetching raw data for {industry} in {location}...")
+    print(f"Fetching data for {industry} in {location}...")
 
     sample_results = [
         {"name": "Melb Plumbers", "website": "https://melbplumbers.com.au"},
@@ -17,7 +18,9 @@ def fetch_businesses(industry, location):
 def start_search():
     industry = industry_entry.get()
     location = location_entry.get()
+
     status_label.config(text=f"Searching for {industry} in {location}...")
+    search_button.config(state=tk.DISABLED)
 
     results = fetch_businesses(industry, location)
 
@@ -25,17 +28,20 @@ def start_search():
     for business in results:
         if business["website"] is None:
             filtered_leads.append(business)
+
     with open("leads.csv", "w", newline="") as f:
         fieldnames = ["name", "website"]
         writer = csv.DictWriter(f, fieldnames=fieldnames)
         writer.writeheader()
         writer.writerows(filtered_leads)
-    status_label.config(text=f"Saved {len(filtered_leads)} leads to leads.csv!")
 
-    status_label.config(
-        text=f"Found {len(filtered_leads)} leads without websites!"
-    )  # update ui
-    print("Filtered Leads:", filtered_leads)
+    status_label.config(text=f"Saved {len(filtered_leads)} leads to leads.csv!")
+    search_button.config(state=tk.NORMAL)
+
+
+def run_search_in_thread():
+    search_thread = threading.Thread(target=start_search)
+    search_thread.start()
 
 
 root = tk.Tk()  # blank tkinter canvas thing
@@ -53,7 +59,7 @@ location_entry = tk.Entry(root)
 location_entry.pack()
 
 search_button = tk.Button(
-    root, text="Search", command=start_search
+    root, text="Search", command=run_search_in_thread
 )  # button that is connected to search function above
 search_button.pack()
 
