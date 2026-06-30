@@ -2,6 +2,7 @@ import tkinter as tk
 import requests
 import csv
 import threading
+from bs4 import BeautifulSoup
 
 
 def fetch_businesses(industry, location):
@@ -20,7 +21,7 @@ def start_search():
     location = location_entry.get()
 
     status_label.config(text=f"Searching for {industry} in {location}...")
-    search_button.config(state=tk.DISABLED)
+    search_button.config(state=tk.DISABLED)  # turns off button so it cannot be spammed
 
     results = fetch_businesses(industry, location)
 
@@ -36,7 +37,7 @@ def start_search():
         writer.writerows(filtered_leads)
 
     status_label.config(text=f"Saved {len(filtered_leads)} leads to leads.csv!")
-    search_button.config(state=tk.NORMAL)
+    search_button.config(state=tk.NORMAL)  # turns button back on after search is done
 
 
 def run_search_in_thread():
