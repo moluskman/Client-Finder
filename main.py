@@ -88,6 +88,13 @@ def run_search_in_thread():
     search_thread.start()
 
 
+def clear_leads_file():
+    with open("leads.csv", "w", newline="", encoding="utf-8") as f:
+        writer = csv.DictWriter(f, fieldnames=["name", "website"])
+        writer.writeheader()
+    status_label.config(text="leads.csv has been wiped clean!")
+
+
 #  tkinter ui stuff
 root = tk.Tk()
 root.title("Client Finder")
@@ -105,6 +112,9 @@ location_entry.pack()
 
 search_button = tk.Button(root, text="Search", command=run_search_in_thread)
 search_button.pack()
+
+clear_button = tk.Button(root, text="Clear Leads File", command=clear_leads_file)
+clear_button.pack()
 
 status_label = tk.Label(root, text="")
 status_label.pack()
