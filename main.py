@@ -1,5 +1,5 @@
 import tkinter as tk
-import requests
+from curl_cffi import requests
 import csv
 import threading
 from bs4 import BeautifulSoup
@@ -8,7 +8,7 @@ from bs4 import BeautifulSoup
 def fetch_businesses(industry, location):
     print(f"Fetching data for {industry} in {location}...")
 
-    # Clean user entries
+    # lean user entries
     clean_industry = industry.replace(" ", "+")
     clean_location = location.replace(" ", "+")
 
@@ -19,7 +19,7 @@ def fetch_businesses(industry, location):
     }
 
     try:
-        response = requests.get(url, headers=headers, timeout=10)
+        response = requests.get(url, headers=headers, impersonate="chrome", timeout=10)
         if response.status_code != 200:
             print(
                 f"Could not retrieve data. Server status code: {response.status_code}"
