@@ -7,28 +7,53 @@ from bs4 import BeautifulSoup
 
 def fetch_businesses(industry, location):
     print(f"Fetching data for {industry} in {location}...")
+
+    # Clean user entries
     clean_industry = industry.replace(" ", "+")
     clean_location = location.replace(" ", "+")
-    url = "https://webscraper.io/test-sites/e-commerce/allinone"
-    response = requests.get(url)
-    soup = BeautifulSoup(response.text, "html.parser")
 
+    #  parameters for a live business directory URL
+    url = f"https://www.yellowpages.com.au/search/listings?clue={clean_industry}&locationClue={clean_location}"
+    headers = {
+        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
+    }
+
+    try:
+        response = requests.get(url, headers=headers, timeout=10)
+        if response.status_code != 200:
+            print(
+                f"Could not retrieve data. Server status code: {response.status_code}"
+            )
+            return []
+    except Exception as e:
+        print(f"Network error occurred: {e}")
+        return []
+
+    soup = BeautifulSoup(response.text, "html.parser")
     scraped_results = []
 
-    cards = soup.find_all("div", class_="business-card")
+    cards = soup.find_all("div", class_="result")
 
     for card in cards:
-        name = card.find("h2", class_="biz-name").text
+        try:
+            name_tag = card.find("a", class_="business-name")
+            if name_tag is None:
+                continue
+            name = name_tag.text.strip()
 
-        link_tag = card.find("a", class_="biz-website")
+            link_tag = card.find("a", class_="track-visit-website")
 
-        if link_tag is not None:
-            website_url = link_tag["href"]
-        else:
-            website_url = None
+            if link_tag is not None:
+                website_url = link_tag["href"]
+            else:
+                website_url = None
 
-        business_info = {"name": name, "website": website_url}
-        scraped_results.append(business_info)
+            business_info = {"name": name, "website": website_url}
+            scraped_results.append(business_info)
+
+        except Exception as e:
+            print(f"Skipping unexpected item layout format: {e}")
+            continue
 
     return scraped_results
 
@@ -44,10 +69,11 @@ def start_search():
 
     filtered_leads = []
     for business in results:
+        # filter strictly for businesses missing a website url string
         if business["website"] is None:
             filtered_leads.append(business)
 
-    with open("leads.csv", "w", newline="") as f:
+    with open("leads.csv", "w", newline="", encoding="utf-8") as f:
         fieldnames = ["name", "website"]
         writer = csv.DictWriter(f, fieldnames=fieldnames)
         writer.writeheader()
@@ -62,13 +88,14 @@ def run_search_in_thread():
     search_thread.start()
 
 
-root = tk.Tk()  # blank tkinter canvas thing
+#  tkinter ui stuff
+root = tk.Tk()
 root.title("Client Finder")
 root.geometry("400x300")
 
-industry_label = tk.Label(root, text="Industry:")  # label is text that can be seen
+industry_label = tk.Label(root, text="Industry:")
 industry_label.pack()
-industry_entry = tk.Entry(root)  # entry is like search bar
+industry_entry = tk.Entry(root)
 industry_entry.pack()
 
 location_label = tk.Label(root, text="Location:")
@@ -76,9 +103,7 @@ location_label.pack()
 location_entry = tk.Entry(root)
 location_entry.pack()
 
-search_button = tk.Button(
-    root, text="Search", command=run_search_in_thread
-)  # button that is connected to search function above
+search_button = tk.Button(root, text="Search", command=run_search_in_thread)
 search_button.pack()
 
 status_label = tk.Label(root, text="")
