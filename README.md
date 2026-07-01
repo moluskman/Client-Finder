@@ -15,7 +15,7 @@ A Python-based desktop application (GUI) designed for web developers to streamli
 
 ---
 
-## 🛠️ Installation & Setup
+## Installation & Setup
 
 ### 1. Clone the Repository
 ```bash
