@@ -14,10 +14,3 @@ A Python-based desktop application (GUI) designed for web developers to streamli
 * **One-Click Clear:** Includes a built-in reset button to wipe your spreadsheet clean between searches.
 
 ---
-
-## Installation & Setup
-
-### 1. Clone the Repository
-```bash
-git clone [https://github.com/YOUR_USERNAME/YOUR_REPO_NAME.git](https://github.com/YOUR_USERNAME/YOUR_REPO_NAME.git)
-cd YOUR_REPO_NAME
